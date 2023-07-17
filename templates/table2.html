@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipt Table</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Quantity</th>
+                <th>Name</th>
+                <th>Total Price</th>
+                <th>Person</th>
+            </tr>
+        </thead>
+        <tbody>
+            <form method="get" action="/done">
+                {% for item in item_data %}
+                <tr>
+                    <td>{{ item.Quantity }}</td>
+                    <td>{{ item.Name }}</td>
+                    <td>{{ item.TotalPrice }}</td>
+                    <td>{{ item.Person }}</td>
+                </tr>
+                {% endfor %}
+                <input type="submit" value="Submit">
+                <tr>
+                    <td></td>
+                    <td>Subtotal</td>
+                    <td>{{ misc_data.Subtotal }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Tax</td>
+                    <td>{{ misc_data.Tax }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Total</td>
+                    <td>{{ misc_data.Total }}</td>
+                </tr>
+            </form>
+        </tbody>          
+    </table>
+
+    <h2>Miscellaneous Data:</h2>
+    <ul>
+        {% for key, value in misc_data.items() %}
+        <li>{{ key }}: {{ value }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

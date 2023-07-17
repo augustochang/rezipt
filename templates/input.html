@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+    #file-input {
+      display: none;
+    }
+    #custom-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #selected-image {
+      margin-top: 20px;
+      position: relative;  /* Add this line */
+    }
+    .preview-img {
+      max-width: 200px;   /* Add this line */
+      height: auto;       /* Add this line */
+      position: fixed;    /* Add this line */
+      top: 0;             /* Add this line */
+      left: 0;            /* Add this line */
+    }
+  </style>
+  <script>
+    function handleFileSelect(event) {
+      var file = event.target.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function(event) {
+        var img = document.createElement('img');
+        img.src = event.target.result;
+        img.setAttribute('class', 'preview-img');
+        document.getElementById('selected-image').appendChild(img);
+      }
+
+      reader.readAsDataURL(file);
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>Image Upload</h2>
+    <form method="POST" action="/upload_fake" enctype="multipart/form-data">
+      <input type="file" id="file-input" name="file" onchange="handleFileSelect(event)">
+      <label for="file-input" id="custom-button">Select Image</label>
+      <div id="selected-image"></div>
+      <br>
+      <button type="submit">Upload</button>
+    </form>
+  </div>
+</body>
+</html>

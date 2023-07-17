@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 20px 40px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    function redirectToInput() {
+      window.location.href = '/input';
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome, are you ready?</h2>
+    <button class="btn" onclick="redirectToInput()">Click here!</button>
+  </div>
+</body>
+</html>
