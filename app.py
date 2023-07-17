@@ -69,10 +69,12 @@ def done():
     bill_total = float(misc_data["Total"])
     bill_subtotal = float(misc_data["Subtotal"])
     sums_by_person = defaultdict(float)
+
     for item in item_data:
         person = item['Person']
         total_price = item['TotalPrice']
         sums_by_person[person] += total_price
+        
     # Calculate tax and tip per person
     tax_per_person = {}
     tip_per_person = {}
@@ -107,7 +109,6 @@ def handle_extraction():
     except json.JSONDecodeError:
         return 'Invalid JSON data', 400
     result_ = json.dumps(result, indent=4)
-    #print(result_)
     item_data = result.get('item_data', [])
     misc_data = result.get('misc_data', {})
     
@@ -179,4 +180,5 @@ if __name__ == '__main__':
     #git commit -m "frst commit" 
     #git remote add origin https://github.com/augustochang/rezipt.git
     #git push -u origin master
+    #git remote remove origin  
 
