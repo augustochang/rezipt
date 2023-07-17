@@ -74,7 +74,7 @@ def done():
         person = item['Person']
         total_price = item['TotalPrice']
         sums_by_person[person] += total_price
-        
+
     # Calculate tax and tip per person
     tax_per_person = {}
     tip_per_person = {}
@@ -172,6 +172,7 @@ if __name__ == '__main__':
     app.run(debug=True)
 
     ##notes
+    #holas
     #conda activate tester
     #python app.py
     #git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
