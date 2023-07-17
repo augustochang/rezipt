@@ -126,7 +126,7 @@ def extract_receipt_data(image_bytes):
             image.save(output, format="JPEG")
             image_bytes = output.getvalue()
 
-    credentials = json.load(open('./credential.json'))
+    credentials = json.load(open('./credential1.json'))
     API_KEY = credentials['API_KEY']
     ENDPOINT = credentials['ENDPOINT']
     form_recognizer_client = FormRecognizerClient(ENDPOINT, AzureKeyCredential(API_KEY))
