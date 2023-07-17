@@ -177,3 +177,6 @@ if __name__ == '__main__':
     #git init
     #git add .
     #git commit -m "frst commit" 
+    #git remote add origin https://github.com/augustochang/rezipt.git
+    #git push -u origin master
+
