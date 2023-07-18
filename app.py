@@ -10,7 +10,7 @@ import csv
 from collections import defaultdict
 import credential
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 
 item_data = []
 misc_data = {}
@@ -42,7 +42,7 @@ def handle_extraction_fake():
     # Combine the 'Person' input with the item data
     for i, item in enumerate(item_data):
         item['Person'] = ''
-    return render_template('table.html', item_data=item_data, misc_data=misc_data)
+    return render_template('table_stage.html', item_data=item_data, misc_data=misc_data)
 
 @app.route('/save', methods=['POST'])
 def process_data():
@@ -109,14 +109,13 @@ def handle_extraction():
         result = json.loads(result)
     except json.JSONDecodeError:
         return 'Invalid JSON data', 400
-    result_ = json.dumps(result, indent=4)
     item_data = result.get('item_data', [])
     misc_data = result.get('misc_data', {})
     
     # Combine the 'Person' input with the item data
     for i, item in enumerate(item_data):
         item['Person'] = ''
-    return render_template('table.html', item_data=item_data, misc_data=misc_data)
+    return render_template('table_stage.html', item_data=item_data, misc_data=misc_data)
 
 def extract_receipt_data(image_bytes):
     # Resize the image if it exceeds 4MB

@@ -1,68 +1,44 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Image Upload</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-    }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-    }
-    #file-input {
-      display: none;
-    }
-    #custom-button {
-      padding: 10px 20px;
-      font-size: 16px;
-      color: #fff;
-      background-color: #007bff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #selected-image {
-      margin-top: 20px;
-      position: relative;
-    }
-    .preview-img {
-      max-width: 200px;
-      height: auto;
-      position: fixed;
-      top: 0;
-      left: 0;
-    }
-  </style>
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>Upload Receipt</h2>
+    <form method="POST" action="/upload_fake" enctype="multipart/form-data" class="form-container">
+        <!-- Hidden file input -->
+        <input type="file" id="file-input" name="file" onchange="handleFileSelect(event)" style="display: none;">
+        <!-- Custom button to trigger the file input -->
+        <label for="file-input" id="custom-button" class="btn btn-primary btn-lg">Select Image</label>
+        <!-- Upload button to the right -->
+        <button class="btn btn-primary btn-lg" type="submit" id="upload-button">Upload</button>
+    </form>
+    <!-- Selected image will be displayed here -->
+    <div id="selected-image-container"></div>
+
+    <!-- Loading overlay -->
+    <div id="loading-overlay">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">check that the numbers match</div>
+    </div>
+  </div>
+
   <script>
     function handleFileSelect(event) {
       var file = event.target.files[0];
       var reader = new FileReader();
 
       reader.onload = function(event) {
-        var img = document.createElement('img');
-        img.src = event.target.result;
-        img.setAttribute('class', 'preview-img');
-        document.getElementById('selected-image').appendChild(img);
+          var img = document.createElement('img');
+          img.src = event.target.result;
+          img.setAttribute('class', 'preview-img');
+          document.getElementById('selected-image-container').innerHTML = ''; // Clear previous content
+          document.getElementById('selected-image-container').appendChild(img);
       }
-
       reader.readAsDataURL(file);
     }
+
+    document.getElementById('upload-button').addEventListener('click', function() {
+      // Show the loading overlay when the upload button is clicked
+      document.getElementById('loading-overlay').style.display = 'block';
+    });
   </script>
-</head>
-<body>
-  <div class="container">
-    <h2>Image Upload</h2>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
-      <input type="file" id="file-input" name="file" onchange="handleFileSelect(event)">
-      <label for="file-input" id="custom-button">Select Image</label>
-      <div id="selected-image"></div>
-      <br>
-      <button type="submit">Upload</button>
-    </form>
-  </div>
-</body>
-</html>
+{% endblock %}
