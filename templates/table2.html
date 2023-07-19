@@ -1,53 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Receipt Table</title>
-</head>
-<body>
-    <table>
-        <thead>
-            <tr>
-                <th>Quantity</th>
-                <th>Name</th>
-                <th>Total Price</th>
-                <th>Person</th>
-            </tr>
-        </thead>
-        <tbody>
-            <form method="get" action="/done">
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh;">
+    <h2>Upload Receipt</h2>
+    <form action="/done" method="get">
+        <table>
+            <thead>
+                <tr>
+                    <th>Q</th>
+                    <th>Name</th>
+                    <th>Total Price</th>
+                    <th>Person</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for item in item_data %}
                 <tr>
-                    <td>{{ item.Quantity }}</td>
+                    <td>{{ "%.0f"|format(item.Quantity|default(1)) }}</td>
                     <td>{{ item.Name }}</td>
-                    <td>{{ item.TotalPrice }}</td>
-                    <td>{{ item.Person }}</td>
+                    <td class="a">{{ "%.2f"|format(item.TotalPrice) }}</td>
+                    <td style="width: 110px">{{ item.Person }}</td>
                 </tr>
                 {% endfor %}
-                <input type="submit" value="Submit">
                 <tr>
                     <td></td>
-                    <td>Subtotal</td>
-                    <td>{{ misc_data.Subtotal }}</td>
+                    <td>Automatic Subtotal</td>
+                    <td id="automaticSubtotal">{{ "%.2f"|format(0) }}</td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>Tax</td>
-                    <td>{{ misc_data.Tax }}</td>
+                    <td name="tax" id="taxInput">{{ "%.2f"|format(misc_data.Tax) }}</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td>Total</td>
-                    <td>{{ misc_data.Total }}</td>
+                    <td>Tip</td>
+                    <td name="tip" id="tipInput">{{ "%.2f"|format(misc_data.Tip) }}</td>
                 </tr>
-            </form>
-        </tbody>          
-    </table>
+                <tr>
+                    <td></td>
+                    <td>Automatic Total</td>
+                    <td id="automaticTotalCell">{{ "%.2f"|format(0) }}</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">
+                        <input type="submit" value="Save Changes">
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+</div>
 
-    <h2>Miscellaneous Data:</h2>
-    <ul>
-        {% for key, value in misc_data.items() %}
-        <li>{{ key }}: {{ value }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+<!--
+<h2>Miscellaneous Data:</h2>
+<p>for developing purposes</p>
+<ul>
+    {% for key, value in misc_data.items() %}
+    <li>{{ key }}: {{ value }}</li>
+    {% endfor %}
+</ul>
+-->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var totalPriceElements = document.getElementsByClassName('a');
+        var tipValue = parseFloat(document.getElementById('tipInput').value);
+        var subtotal = 0;
+
+        for (var i = 0; i < totalPriceElements.length; i++) {
+            subtotal += parseFloat(totalPriceElements[i].textContent);
+        }
+
+        var tax = parseFloat(document.getElementById('taxInput').textContent);
+        var tip = parseFloat(document.getElementById('tipInput').textContent);
+        var automaticSubtotal = document.getElementById('automaticSubtotal');
+        var automaticTotalCell = document.getElementById('automaticTotalCell');
+
+        automaticSubtotal.textContent = subtotal.toFixed(2);
+        automaticTotalCell.textContent = (subtotal + tax + tip).toFixed(2);
+    });
+</script>
+{% endblock %}

@@ -2,13 +2,14 @@
 
 {% block content %}
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh;">
-        <h2>Upload Receipt</h2>
+    <h2>Upload Receipt</h2>
+    <form action="/save" method="post">
         <table>
             <thead>
                 <tr>
-                    <th>Quantity</th>
+                    <th>Q</th>
                     <th>Name</th>
-                    <th contenteditable>Total Price</th>
+                    <th>Total Price</th>
                     <th>Person</th>
                 </tr>
             </thead>
@@ -17,128 +18,90 @@
                 <tr>
                     <td>{{ "%.0f"|format(item.Quantity|default(1)) }}</td>
                     <td>{{ item.Name }}</td>
-                    <!-- Use a class 'editable-cell' to identify editable cells -->
-                    <td class="editable-cell">{{ "%.2f"|format(item.TotalPrice) }}</td>
-                    <td><input type="text" name="person{{ loop.index }}" ></td>
+                    <td class="a">{{ "%.2f"|format(item.TotalPrice) }}</td>
+                    <td><input type="text" name="person{{ loop.index }}" style="width: 100px"></td>
                 </tr>
                 {% endfor %}
                 <tr>
                     <td></td>
-                    <td>Subtotal</td>
-                    <td>{{ misc_data.Subtotal }}</td>
-                </tr>
-                <tr>
-                    <td></td>
                     <td>Automatic Subtotal</td>
-                    <td id="automaticSubtotal">0</td>
+                    <td id="automaticSubtotal">{{ "%.2f"|format(0) }}</td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>Tax</td>
-                    <td><input type="number" step="any" name="tax" id="taxInput" value="{{ misc_data.Tax }}"></td>
+                    <td name="tax" id="taxInput">{{ misc_data.Tax }}</td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>Tip</td>
-                    <td><input type="number" step="any" name="tip" id="tipInput" value="0"></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>Total</td>
-                    <td><input type="number" step="any" name="total" value="{{ misc_data.Total }}"></td>
+                    <td>
+                        <input type="text" name="tip" id="tipInput" value="{{ misc_data.Tip }}" style="width: 40px;">
+                    </td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>Automatic Total</td>
-                    <td id="automaticTotal">0</td>
+                    <td id="automaticTotalCell">{{ "%.2f"|format(0) }}</td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="4">
-                        <input type="submit" value="Submit">
+                        <input type="submit" value="Save Changes">
                     </td>
                 </tr>
             </tfoot>
         </table>
-    </div>
+    </form>
+</div>
 
-    <h2>Miscellaneous Data:</h2>
-    <p>for developing purposes</p>
-    <ul>
-        {% for key, value in misc_data.items() %}
-        <li>{{ key }}: {{ value }}</li>
-        {% endfor %}
-    </ul>
+<!--
+<h2>Miscellaneous Data:</h2>
+<p>for developing purposes</p>
+<ul>
+    {% for key, value in misc_data.items() %}
+    <li>{{ key }}: {{ value }}</li>
+    {% endfor %}
+</ul>
+-->
 
-    <script>
-       // Add an event listener to the 'Total Price' cells for 'click' event
-        document.addEventListener('DOMContentLoaded', function () {
-            const editableCells = document.querySelectorAll('.editable-cell');
-            editableCells.forEach(cell => {
-                cell.addEventListener('click', function () {
-                    // Create an input element and set its value to the cell's content
-                    const inputElement = document.createElement('input');
-                    inputElement.type = 'number';
-                    inputElement.value = parseFloat(this.innerText).toFixed(2);
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var totalPriceElements = document.getElementsByClassName('a');
+        var tipValue = parseFloat(document.getElementById('tipInput').value);
+        var subtotal = 0;
 
-                    // Replace the cell's content with the input element
-                    this.innerHTML = '';
-                    this.appendChild(inputElement);
-
-                    // Focus on the input element to enable direct editing
-                    inputElement.focus();
-
-                    // Add an event listener to handle changes when the user leaves the input
-                    inputElement.addEventListener('blur', function () {
-                        updateCellValue(this.parentElement, this.value);
-                    });
-
-                    // Add an event listener to handle the "Enter" key press
-                    inputElement.addEventListener('keypress', function (event) {
-                        if (event.key === 'Enter') {
-                            updateCellValue(this.parentElement, this.value);
-                        }
-                    });
-                });
-            });
-        });
-
-        function updateCellValue(cell, newValue) {
-            // Format the new value to two decimal places
-            const formattedValue = parseFloat(newValue).toFixed(2);
-
-            // Restore the original cell content with the updated value
-            cell.innerHTML = formattedValue;
+        for (var i = 0; i < totalPriceElements.length; i++) {
+            subtotal += parseFloat(totalPriceElements[i].textContent);
         }
 
+        var tax = parseFloat(document.getElementById('taxInput').textContent);
+        var automaticSubtotal = document.getElementById('automaticSubtotal');
+        var automaticTotalCell = document.getElementById('automaticTotalCell');
 
-        /*
-        document.addEventListener('DOMContentLoaded', function () {
-            const taxInput = document.getElementById('taxInput');
-            const tipInput = document.getElementById('tipInput');
-            const automaticSubtotal = document.getElementById('automaticSubtotal');
-            const automaticTotal = document.getElementById('automaticTotal');
-            const subtotal = parseFloat('{{ misc_data.Subtotal }}');
-        
-            function updateAutomaticValues() {
-                const tax = parseFloat(taxInput.value) || 0;
-                const tip = parseFloat(tipInput.value) || 0;
-        
-                const total = subtotal + tax + tip;
-        
-                automaticSubtotal.textContent = subtotal.toFixed(2);
-                automaticTotal.textContent = total.toFixed(2);
+        automaticSubtotal.textContent = subtotal.toFixed(2);
+        automaticTotalCell.textContent = (subtotal + tax + tipValue).toFixed(2);
+    });
+
+    document.getElementById('tipInput').addEventListener('input', function() {
+        var totalPriceElements = document.getElementsByClassName('a');
+        var tipValue = parseFloat(document.getElementById('tipInput').value);
+        var subtotal = 0;
+
+        for (var i = 0; i < totalPriceElements.length; i++) {
+            var name = totalPriceElements[i].textContent;
+            if (name !== "Tax") {
+                subtotal += parseFloat(totalPriceElements[i].textContent);
             }
-        
-            // Listen for changes in the tax and tip input fields
-            taxInput.addEventListener('input', updateAutomaticValues);
-            tipInput.addEventListener('input', updateAutomaticValues);
-        
-            // Initial update when the page loads
-            updateAutomaticValues();
-        });*/
-    </script>
-    <!-- <script src="{{ url_for('static', filename='js/table_update.js') }}"></script> -->
-{% endblock %}
+        }
 
+        var tax = parseFloat(document.getElementById('taxInput').textContent);
+        var automaticSubtotal = document.getElementById('automaticSubtotal');
+        var automaticTotalCell = document.getElementById('automaticTotalCell');
+
+        automaticSubtotal.textContent = subtotal.toFixed(2);
+        automaticTotalCell.textContent = (subtotal + tax + tipValue).toFixed(2);
+    });
+</script>
+{% endblock %}

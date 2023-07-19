@@ -33,11 +33,22 @@ def input_page():
 
 @app.route('/upload_fake', methods=['POST'])
 def handle_extraction_fake():
-    global item_data
-    global misc_data
+    global item_data, misc_data
     result = {'item_data': [{'Name': 'TRKY BRGR / NO BUN', 'Name_Confidence': 0.872, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 12.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'CHCKN POT PIE', 'Name_Confidence': 0.908, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 11.5, 'TotalPrice_Confidence': 0.971}, {'Name': 'ROAST CHCKN', 'Name_Confidence': 0.925, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 13.5, 'TotalPrice_Confidence': 0.971}, {'Name': 'SALAD', 'Name_Confidence': 0.932, 'Quantity': 1.0, 'Quantity_Confidence': 0.938, 'TotalPrice': 8.95, 'TotalPrice_Confidence': 0.971}, {'Name': 'BRUSSELS SPROUTS', 'Name_Confidence': 0.927, 'Quantity': 1.0, 'Quantity_Confidence': 0.937, 'TotalPrice': 7.95, 'TotalPrice_Confidence': 0.971}, {'Name': 'ICED TEA', 'Name_Confidence': 0.925, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 3.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'SODA', 'Name_Confidence': 0.933, 'Quantity': 1.0, 'Quantity_Confidence': 0.938, 'TotalPrice': 3.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'LEMONADE', 'Name_Confidence': 0.933, 'Quantity': 1.0, 'Quantity_Confidence': 0.937, 'TotalPrice': 5.0, 'TotalPrice_Confidence': 0.971}], 'misc_data': {'ReceiptType': 'Itemized', 'ReceiptType_Confidence': 0.994, 'Subtotal': 64.9, 'Subtotal_Confidence': 0.983, 'Tax': 5.84, 'Tax_Confidence': 0.987, 'Total': 70.74, 'Total_Confidence': 0.982, 'TransactionTime': '18:42:00', 'TransactionTime_Confidence': 0.985}}
     item_data = result.get('item_data', [])
     misc_data = result.get('misc_data', {})
+
+    if 'Tip' not in result['misc_data']:
+        result['misc_data']['Tip'] = 0.00
+    
+    # Calculate subtotal_amount
+    subtotal_amount = sum(item['TotalPrice'] for item in result['item_data'])
+    result['misc_data']['Subtotal2'] = "{:.2f}".format(subtotal_amount)
+    #subtotal_amount = 0
+    # Calculate total_amount (subtotal + tax)
+    total_amount = subtotal_amount + result['misc_data']['Tax'] + result['misc_data']['Tip']
+    result['misc_data']['Total2'] = "{:.2f}".format(total_amount)
+    #total_amount = 0
     ######
     # Combine the 'Person' input with the item data
     for i, item in enumerate(item_data):
@@ -45,21 +56,27 @@ def handle_extraction_fake():
     return render_template('table_stage.html', item_data=item_data, misc_data=misc_data)
 
 @app.route('/save', methods=['POST'])
-def process_data():
-    global item_data
-    global misc_data
-    # Get the user input for the 'Person' column
-    persons = [request.form.get(f'person{i+1}') for i in range(len(item_data))]
-    # Combine the 'Person' input with the item data
-    for i, item in enumerate(item_data):
-        item['Person'] = persons[i] if i < len(persons) else ''
-    
-    misc_data['Total'] = request.form.get('total')
-    misc_data['Tax'] = request.form.get('tax')
-    misc_data['Tip'] = request.form.get('tip')
+def save_changes():
+    global item_data, misc_data
 
-    return render_template('table2.html', item_data=item_data, misc_data=misc_data)
+    if request.method == 'POST':
+        # Get the form data sent from the 'editable-cell' cells
+        for key, value in request.form.items():
+            if key.startswith('person'):
+                # Assuming 'person1', 'person2', ... keys represent 'Person' column values
+                person_index = int(key.replace('person', '')) - 1
+                item_data[person_index]['Person'] = value
+            elif key == 'tax':
+                # Assuming the 'tax' key represents the 'Tax' cell value
+                misc_data['Tax'] = float(value)
+            elif key == 'tip':
+                # Assuming the 'tip' key represents the 'Tip' cell value
+                misc_data['Tip'] = float(value)
 
+        # Perform any other necessary calculations or updates here
+
+        # Redirect back to the table page after saving changes
+        return render_template('table2.html', item_data=item_data, misc_data=misc_data)
 
 @app.route('/done', methods=['GET'])
 def done():
@@ -67,8 +84,8 @@ def done():
     global misc_data
     tax = float(misc_data["Tax"])
     tip = float(misc_data.get('Tip', 0))
-    bill_total = float(misc_data["Total"])
-    bill_subtotal = float(misc_data["Subtotal"])
+    bill_total = float(misc_data["Total2"])
+    bill_subtotal = float(misc_data["Subtotal2"])
     sums_by_person = defaultdict(float)
 
     for item in item_data:

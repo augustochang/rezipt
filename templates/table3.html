@@ -1,62 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sum of Total Prices</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
+{% extends "base.html" %}
 
-        th, td {
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-top: 10px;
-        }
-        
-        .button-container button {
-            margin-bottom: 5px;
-        }
-    </style>
-    <script>
-        function exportTableToCSV(filename) {
-            var csv = [];
-            var rows = document.querySelectorAll("table tr");
-
-            for (var i = 0; i < rows.length; i++) {
-                var row = [], cols = rows[i].querySelectorAll("td, th");
-
-                for (var j = 0; j < cols.length; j++) {
-                    row.push(cols[j].innerText);
-                }
-
-                csv.push(row.join(","));
-            }
-
-            // Download CSV file
-            var csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
-            var link = document.createElement("a");
-            link.setAttribute("href", encodeURI(csvContent));
-            link.setAttribute("download", filename + ".csv");
-            link.click();
-        }
-        
-        function showFeatureNotAvailable() {
-            alert("Feature not yet available");
-        }
-    </script>
-</head>
-<body>
+{% block content %}
+<div class="table" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; ">
     <table>
         <tr>
             <th>Person</th>
@@ -90,10 +35,38 @@
                 {{ "%.2f" % final_total_sum }}</strong></td>
         </tr>
     </table>
-    
-    <div class="button-container">
+
+    <div class="button-container" style="margin-top: 20px;">
         <button onclick="exportTableToCSV('table_data')">Export to CSV</button>
         <button onclick="showFeatureNotAvailable()">Venmo Request your friends</button>
     </div>
-</body>
-</html>
+</div>
+    <script>
+        function exportTableToCSV(filename) {
+            var csv = [];
+            var rows = document.querySelectorAll("table tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var row = [], cols = rows[i].querySelectorAll("td, th");
+
+                for (var j = 0; j < cols.length; j++) {
+                    row.push(cols[j].innerText);
+                }
+
+                csv.push(row.join(","));
+            }
+
+            // Download CSV file
+            var csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+            var link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", filename + ".csv");
+            link.click();
+        }
+        
+        function showFeatureNotAvailable() {
+            alert("Feature not yet available");
+        }
+    </script>
+{% endblock %}
+
