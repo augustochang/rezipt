@@ -107,8 +107,7 @@ def done():
 
 @app.route('/upload', methods=['POST'])
 def handle_extraction():
-    global item_data
-    global misc_data
+    global item_data,misc_data
     if 'file' not in request.files:
         return 'No file part in the request', 400
     
@@ -129,9 +128,26 @@ def handle_extraction():
     item_data = result.get('item_data', [])
     misc_data = result.get('misc_data', {})
     
+    if 'Tip' not in misc_data.keys() or misc_data['Tip'] == None:
+        misc_data['Tip'] = 0.00
+
+    if 'Tax' not in misc_data.keys():
+        misc_data['Tax'] = 0.00
+    
+    # Calculate subtotal_amount
+    subtotal_amount = sum(item['TotalPrice'] for item in result['item_data'])
+    misc_data['Subtotal2'] = "{:.2f}".format(subtotal_amount)
+    #subtotal_amount = 0
+    # Calculate total_amount (subtotal + tax)
+    total_amount = subtotal_amount + misc_data['Tax'] + misc_data['Tip']
+    misc_data['Total2'] = "{:.2f}".format(total_amount)
+    #total_amount = 0
+    ######
     # Combine the 'Person' input with the item data
     for i, item in enumerate(item_data):
         item['Person'] = ''
+
+
     return render_template('table_stage.html', item_data=item_data, misc_data=misc_data)
 
 def extract_receipt_data(image_bytes):

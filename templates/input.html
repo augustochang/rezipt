@@ -3,7 +3,7 @@
 {% block content %}
   <div class="container">
     <h2>Upload Receipt</h2>
-    <form method="POST" action="/upload_fake" enctype="multipart/form-data" class="form-container">
+    <form method="POST" action="/upload" enctype="multipart/form-data" class="form-container">
         <!-- Hidden file input -->
         <input type="file" id="file-input" name="file" onchange="handleFileSelect(event)" style="display: none;">
         <!-- Custom button to trigger the file input -->
@@ -17,7 +17,7 @@
     <!-- Loading overlay -->
     <div id="loading-overlay">
       <div class="loading-spinner"></div>
-      <div class="loading-text">check that the numbers match</div>
+      <div class="loading-text">please double check that the numbers match receipt</div>
     </div>
   </div>
 
