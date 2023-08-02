@@ -29,7 +29,10 @@ image_processing_complete = False
 # Define a function for processing the image and handling extraction
 def process_image_and_extraction(file):
     global item_data, misc_data, image_processing_complete
+    #try:
     item_data, misc_data = extract_receipt_data(file)
+    #except:
+    #print('d')
     image_processing_complete = True  # Set processing status to True upon completion
     return item_data, misc_data
 
@@ -69,7 +72,7 @@ def extract_receipt_data(file):
 
     updated_item_data = []
     for item in item_data:
-        quantity = item['Quantity']
+        quantity = item.get('Quantity', 1)
         if quantity > 1.0:
             # Calculate the individual price for each item with quantity > 1.0
             individual_price = item['TotalPrice'] / quantity
@@ -267,8 +270,9 @@ def handle_extraction():
         return 'No file selected', 400
 
     # Start the image processing and extraction in a separate thread
-    thread = threading.Thread(target=process_image_and_extraction, args=(file,))
-    thread.start()
+    # thread = threading.Thread(target=process_image_and_extraction, args=(file,))
+    # thread.start()
+    item_data, misc_data = extract_receipt_data(file)
 
     # Set processing status to False initially
     image_processing_complete = False
@@ -298,7 +302,7 @@ if __name__ == '__main__':
     #git init
     #git add .
     #git commit -m "frst commit" 
-    #git remote add origin https://github.com/augustochang/rezipt.git
+    ##git remote add origin https://github.com/augustochang/rezipt.git
     #git push -u origin master
     #git remote remove origin  
 
