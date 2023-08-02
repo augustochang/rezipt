@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <form id="nameForm">
+            <label for="name">Enter Name:</label>
+            <input type="text" id="name" name="name" required>
+            <button class="btn btn-primary btn-lg" type="button" id="addButton">Add Name</button>
+            <button class="btn btn-primary btn-lg" type="button" id="postButton" disabled>Next</button>
+        </form>
+
+        <div id="namesList">
+            <ul id="namesDisplay"></ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addButton = document.getElementById("addButton");
+            const postButton = document.getElementById("postButton");
+            const nameForm = document.getElementById("nameForm");
+            const names = [];
+
+            addButton.addEventListener("click", function () {
+                const nameInput = document.getElementById("name");
+                const name = nameInput.value.trim();
+                if (name) {
+                    names.push(name);
+                    nameInput.value = "";
+                    postButton.disabled = false;
+
+                    // Update the display of added names
+                    const namesDisplay = document.getElementById("namesDisplay");
+                    const listItem = document.createElement("li");
+                    listItem.textContent = name;
+                    namesDisplay.appendChild(listItem);
+                }
+            });
+
+            postButton.addEventListener("click", function () {
+                if (names.length > 0) {
+                    fetch("/table", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ names: names }),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        // Redirect the browser to the /table route
+                        window.location.href = "/table";
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

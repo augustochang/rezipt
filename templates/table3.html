@@ -2,6 +2,7 @@
 
 {% block content %}
 <div class="table" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; ">
+    <h2>Rezipt</h2>
     <table>
         <tr>
             <th>Person</th>
@@ -37,9 +38,10 @@
     </table>
 
     <div class="button-container" style="margin-top: 20px;">
-        <button onclick="exportTableToCSV('table_data')">Export to CSV</button>
+        <button onclick="exportTableToCSV('table_data')">Save to files</button>
         <button onclick="showFeatureNotAvailable()">Venmo Request your friends</button>
     </div>
+    <p>screenshot and share!</p>
 </div>
     <script>
         function exportTableToCSV(filename) {

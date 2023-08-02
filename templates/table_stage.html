@@ -19,7 +19,14 @@
                     <td>{{ "%.0f"|format(item.Quantity|default(1)) }}</td>
                     <td>{{ item.Name }}</td>
                     <td class="a">{{ "%.2f"|format(item.TotalPrice) }}</td>
-                    <td><input type="text" name="person{{ loop.index }}" style="width: 100px"></td>
+                    <td>
+                        <select name="person{{ loop.index }}" style="width: 100px">
+                            {% for name in names_array %}
+                                <option value="{{ name }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <!-- <td><input type="text" name="person{{ loop.index }}" style="width: 100px"></td> -->
                 </tr>
                 {% endfor %}
                 <tr>
@@ -36,7 +43,7 @@
                     <td></td>
                     <td>Tip</td>
                     <td>
-                        <input type="text" name="tip" id="tipInput" value="{{ misc_data.Tip }}" style="width: 40px;">
+                        <input type="text" name="tip" id="tipInput" value="{{ misc_data.Tip }}" style="width: 60px;">
                     </td>
                 </tr>
                 <tr>
