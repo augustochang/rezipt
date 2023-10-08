@@ -255,11 +255,16 @@ if __name__ == '__main__':
     #conda info --envs
     #conda activate tester
     #python app.py
-    #git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
+
     #git init
     #git add .
     #git commit -m "frst commit" 
-    ##git remote add origin https://github.com/augustochang/rezipt.git
+    ##git remote add origin https://github.com/augustochang/rezipt.git (no usar)
     #git push -u origin master
-    #git remote remove origin  
+    #git remote remove origin  (no usar)
 
+    #Add to python anywhere
+    #git clone https://github.com/augustochang/rezipt.git
+    # github, settings, developer settings, tokens classic
+    # add credential.py
+    #reload
