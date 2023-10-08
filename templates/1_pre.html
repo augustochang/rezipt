@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Navigation -->
+    <!-- Header -->
+    <div class="container">
+        <h1>Rezipt</h1>
+        <p>splitting your bill made simple</p>
+        <div>
+            <a href="#" class="btn btn-primary btn-lg" onclick="redirectToInput()">try it out!</a>
+            <button class="btn" id="openModalBtn">?</button>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" id="closeModalBtn">&times;</span>
+            <p>Rezipt is a open source project developed by augusto
+                to make accurate bill splitting accessible.<br>
+                How it works?<br>
+                1. Take a picture of the reciept<br>
+                2. Enter names of people in party<br>
+                3. Pick who ate what<br>
+                4. Viola!
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Footer
+    <footer class="page-footer">
+        <div class="small-print">
+            <div class="container">
+                <p>we do not store any of your information</p>
+                <p>Copyright &copy; rezipt 2023</p>
+            </div>
+        </div>
+        
+    </footer>
+    -->
+    <script>
+        function redirectToInput() {
+            window.location.href = '/input';
+        }
+
+        // Get references to the modal and its close button
+        const modal = document.getElementById("myModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+
+        // Get references to the open modal button
+        const openModalBtn = document.getElementById("openModalBtn");
+
+        // Open the modal when the button is clicked
+        openModalBtn.addEventListener("click", function() {
+            modal.style.display = "block";
+        });
+
+        // Close the modal when the close button is clicked
+        closeModalBtn.addEventListener("click", function() {
+            modal.style.display = "none";
+        });
+
+        // Close the modal when clicking outside of it
+        window.addEventListener("click", function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    </script>
+
+{% endblock %}

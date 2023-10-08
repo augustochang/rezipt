@@ -2,16 +2,20 @@
 
 {% block content %}
     <div class="container">
+        <h1>Who ate?</h1>
         <form id="nameForm">
-            <label for="name">Enter Name:</label>
-            <input type="text" id="name" name="name" required>
+            <div>
+                <label for="name">Enter Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div id="namesList">
+                <ul id="namesDisplay" class="list-group list-unstyled"></ul>
+            </div>
             <button class="btn btn-primary btn-lg" type="button" id="addButton">Add Name</button>
             <button class="btn btn-primary btn-lg" type="button" id="postButton" disabled>Next</button>
         </form>
 
-        <div id="namesList">
-            <ul id="namesDisplay"></ul>
-        </div>
+
     </div>
 
     <script>

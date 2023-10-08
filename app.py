@@ -18,6 +18,7 @@ item_data = []
 misc_data = {}
 names_array = []
 image_processing_complete = False
+#SUPPORTING FUNCTIONS
 
 # # Define the asynchronous function to process the image and handle extraction
 # async def process_image_and_extraction(file):
@@ -36,31 +37,41 @@ def process_image_and_extraction(file):
     image_processing_complete = True  # Set processing status to True upon completion
     return item_data, misc_data
 
-
 def extract_receipt_data(file):
 
-    # Process the binary image data
-    image_bytes = file.read()
+    a = 1 #varaible to test and not calling API (1 for production)
+    if a == 1:
+        # Process the binary image data
+        image_bytes = file.read()
 
-    # Resize the image if it exceeds 4MB
-    max_image_size = 4 * 1024 * 1024  # 4MB
-    if len(image_bytes) > max_image_size:
-        image = Image.open(io.BytesIO(image_bytes))
-        image.thumbnail((1920, 1920))  # Resize to a maximum of 1920x1920 pixels
-        with io.BytesIO() as output:
-            image.save(output, format="JPEG")
-            image_bytes = output.getvalue()
+        # Resize the image if it exceeds 4MB
+        max_image_size = 4 * 1024 * 1024  # 4MB
+        if len(image_bytes) > max_image_size:
+            image = Image.open(io.BytesIO(image_bytes))
+            image.thumbnail((1920, 1920))  # Resize to a maximum of 1920x1920 pixels
+            with io.BytesIO() as output:
+                image.save(output, format="JPEG")
+                image_bytes = output.getvalue()
 
-    # credentials = json.load(open('./credential1.json'))
-    # API_KEY = credentials['API_KEY']
-    # ENDPOINT = credentials['ENDPOINT']
-    API_KEY = credential.API_KEY
-    ENDPOINT = credential.ENDPOINT
+        # credentials = json.load(open('./credential1.json'))
+        # API_KEY = credentials['API_KEY']
+        # ENDPOINT = credentials['ENDPOINT']
+        API_KEY = credential.API_KEY
+        ENDPOINT = credential.ENDPOINT
 
-    form_recognizer_client = FormRecognizerClient(ENDPOINT, AzureKeyCredential(API_KEY))
-    poller = form_recognizer_client.begin_recognize_receipts(receipt=image_bytes, locale="en-US")
-    result = poller.result()
-    result = format(result)
+        form_recognizer_client = FormRecognizerClient(ENDPOINT, AzureKeyCredential(API_KEY))
+        poller = form_recognizer_client.begin_recognize_receipts(receipt=image_bytes, locale="en-US")
+        result = poller.result()
+        result = format(result)
+        print('AAAA')
+        print(result)
+        print(type(result))
+    else:
+        # result = str({"item_data": [{"Name": "TRKY BRGR / NO BUN", "Name_Confidence": 0.872, "Quantity": 1.0, "Quantity_Confidence": 0.936, "TotalPrice": 12.0, "TotalPrice_Confidence": 0.971}, {"Name": "CHCKN POT PIE", "Name_Confidence": 0.908, "Quantity": 1.0, "Quantity_Confidence": 0.936, "TotalPrice": 11.5, "TotalPrice_Confidence": 0.971}, {"Name": "ROAST CHCKN", "Name_Confidence": 0.925, "Quantity": 1.0, "Quantity_Confidence": 0.936, "TotalPrice": 13.5, "TotalPrice_Confidence": 0.971}, {"Name": "SALAD", "Name_Confidence": 0.932, "Quantity": 1.0, "Quantity_Confidence": 0.938, "TotalPrice": 8.95, "TotalPrice_Confidence": 0.971}, {"Name": "BRUSSELS SPROUTS", "Name_Confidence": 0.927, "Quantity": 1.0, "Quantity_Confidence": 0.937, "TotalPrice": 7.95, "TotalPrice_Confidence": 0.971}, {"Name": "ICED TEA", "Name_Confidence": 0.925, "Quantity": 1.0, "Quantity_Confidence": 0.936, "TotalPrice": 3.0, "TotalPrice_Confidence": 0.971}, {"Name": "SODA", "Name_Confidence": 0.933, "Quantity": 1.0, "Quantity_Confidence": 0.938, "TotalPrice": 3.0, "TotalPrice_Confidence": 0.971}, {"Name": "LEMONADE", "Name_Confidence": 0.933, "Quantity": 1.0, "Quantity_Confidence": 0.937, "TotalPrice": 5.0, "TotalPrice_Confidence": 0.971}], "misc_data": {"ReceiptType": "Itemized", "ReceiptType_Confidence": 0.994, "Subtotal": 64.9, "Subtotal_Confidence": 0.983, "Tax": 5.84, "Tax_Confidence": 0.987, "Total": 70.74, "Total_Confidence": 0.982, "TransactionTime": "18:42:00", "TransactionTime_Confidence": 0.985}})
+        print(type(result))
+        #result = str({'item_data': [{'Name': 'TRKY BRGR / NO BUN', 'Name_Confidence': 0.872, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 12.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'CHCKN POT PIE', 'Name_Confidence': 0.908, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 11.5, 'TotalPrice_Confidence': 0.971}, {'Name': 'ROAST CHCKN', 'Name_Confidence': 0.925, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 13.5, 'TotalPrice_Confidence': 0.971}, {'Name': 'SALAD', 'Name_Confidence': 0.932, 'Quantity': 1.0, 'Quantity_Confidence': 0.938, 'TotalPrice': 8.95, 'TotalPrice_Confidence': 0.971}, {'Name': 'BRUSSELS SPROUTS', 'Name_Confidence': 0.927, 'Quantity': 1.0, 'Quantity_Confidence': 0.937, 'TotalPrice': 7.95, 'TotalPrice_Confidence': 0.971}, {'Name': 'ICED TEA', 'Name_Confidence': 0.925, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 3.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'SODA', 'Name_Confidence': 0.933, 'Quantity': 1.0, 'Quantity_Confidence': 0.938, 'TotalPrice': 3.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'LEMONADE', 'Name_Confidence': 0.933, 'Quantity': 1.0, 'Quantity_Confidence': 0.937, 'TotalPrice': 5.0, 'TotalPrice_Confidence': 0.971}], 'misc_data': {'ReceiptType': 'Itemized', 'ReceiptType_Confidence': 0.994, 'Subtotal': 64.9, 'Subtotal_Confidence': 0.983, 'Tax': 5.84, 'Tax_Confidence': 0.987, 'Total': 70.74, 'Total_Confidence': 0.982, 'TransactionTime': '18:42:00', 'TransactionTime_Confidence': 0.985}})
+        #result = {"item_data": [{"Name": "Blackened Salmon Sandwich", "Name_Confidence": 0.973, "Quantity": 2.0, "Quantity_Confidence": 0.983, "TotalPrice": 42.0, "TotalPrice_Confidence": 0.987}, {"Name": "Chicken Quesadilla", "Name_Confidence": 0.976, "Quantity": 2.0, "Quantity_Confidence": 0.983, "TotalPrice": 30.0, "TotalPrice_Confidence": 0.987}, {"Name": "French Dip", "Name_Confidence": 0.976, "Quantity": 1.0, "Quantity_Confidence": 0.983, "TotalPrice": 22.0, "TotalPrice_Confidence": 0.987}, {"Name": "520 Burger", "Name_Confidence": 0.976, "Quantity": 1.0, "Quantity_Confidence": 0.983, "TotalPrice": 20.0, "TotalPrice_Confidence": 0.987}], "misc_data": {"MerchantAddress": "10146 Main Street Bellevue, WA 98004", "MerchantAddress_Confidence": 0.981, "MerchantName": "520 Bar and Grill", "MerchantName_Confidence": 0.972, "ReceiptType": "Itemized", "ReceiptType_Confidence": 0.99, "Subtotal": 114.0, "Subtotal_Confidence": 0.987, "Tax": 11.52, "Tax_Confidence": 0.988, "Tip": 22.59, "Tip_Confidence": 0.965, "Total": 148.11, "Total_Confidence": 0.72, "TransactionDate": "2023-07-30", "TransactionDate_Confidence": 0.989, "TransactionTime": "21:51:00", "TransactionTime_Confidence": 0.977}}
+   
 
      # Parse the result string into a JSON object
     try:
@@ -145,70 +156,51 @@ def serialize(obj):
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    return render_template('1_pre.html')
     return redirect(url_for('pre'))
     
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    return render_template('login.html')
-
 @app.route('/pre', methods=['POST', 'GET'])
 def pre():
     return render_template('pre.html')
 
 @app.route('/input', methods=['GET'])
 def input_page():
-    return render_template('input.html')
+    return render_template('2_input.html')
 
 @app.route('/people', methods=['POST'])
 def people():
     return render_template('people.html')
 
-@app.route('/upload_fake', methods=['POST'])
-def handle_extraction_fake():
-    global item_data, misc_data
-    #result = {'item_data': [{'Name': 'TRKY BRGR / NO BUN', 'Name_Confidence': 0.872, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 12.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'CHCKN POT PIE', 'Name_Confidence': 0.908, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 11.5, 'TotalPrice_Confidence': 0.971}, {'Name': 'ROAST CHCKN', 'Name_Confidence': 0.925, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 13.5, 'TotalPrice_Confidence': 0.971}, {'Name': 'SALAD', 'Name_Confidence': 0.932, 'Quantity': 1.0, 'Quantity_Confidence': 0.938, 'TotalPrice': 8.95, 'TotalPrice_Confidence': 0.971}, {'Name': 'BRUSSELS SPROUTS', 'Name_Confidence': 0.927, 'Quantity': 1.0, 'Quantity_Confidence': 0.937, 'TotalPrice': 7.95, 'TotalPrice_Confidence': 0.971}, {'Name': 'ICED TEA', 'Name_Confidence': 0.925, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 3.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'SODA', 'Name_Confidence': 0.933, 'Quantity': 1.0, 'Quantity_Confidence': 0.938, 'TotalPrice': 3.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'LEMONADE', 'Name_Confidence': 0.933, 'Quantity': 1.0, 'Quantity_Confidence': 0.937, 'TotalPrice': 5.0, 'TotalPrice_Confidence': 0.971}], 'misc_data': {'ReceiptType': 'Itemized', 'ReceiptType_Confidence': 0.994, 'Subtotal': 64.9, 'Subtotal_Confidence': 0.983, 'Tax': 5.84, 'Tax_Confidence': 0.987, 'Total': 70.74, 'Total_Confidence': 0.982, 'TransactionTime': '18:42:00', 'TransactionTime_Confidence': 0.985}}
-    result = {"item_data": [{"Name": "Blackened Salmon Sandwich", "Name_Confidence": 0.973, "Quantity": 2.0, "Quantity_Confidence": 0.983, "TotalPrice": 42.0, "TotalPrice_Confidence": 0.987}, {"Name": "Chicken Quesadilla", "Name_Confidence": 0.976, "Quantity": 2.0, "Quantity_Confidence": 0.983, "TotalPrice": 30.0, "TotalPrice_Confidence": 0.987}, {"Name": "French Dip", "Name_Confidence": 0.976, "Quantity": 1.0, "Quantity_Confidence": 0.983, "TotalPrice": 22.0, "TotalPrice_Confidence": 0.987}, {"Name": "520 Burger", "Name_Confidence": 0.976, "Quantity": 1.0, "Quantity_Confidence": 0.983, "TotalPrice": 20.0, "TotalPrice_Confidence": 0.987}], "misc_data": {"MerchantAddress": "10146 Main Street Bellevue, WA 98004", "MerchantAddress_Confidence": 0.981, "MerchantName": "520 Bar and Grill", "MerchantName_Confidence": 0.972, "ReceiptType": "Itemized", "ReceiptType_Confidence": 0.99, "Subtotal": 114.0, "Subtotal_Confidence": 0.987, "Tax": 11.52, "Tax_Confidence": 0.988, "Tip": 22.59, "Tip_Confidence": 0.965, "Total": 148.11, "Total_Confidence": 0.72, "TransactionDate": "2023-07-30", "TransactionDate_Confidence": 0.989, "TransactionTime": "21:51:00", "TransactionTime_Confidence": 0.977}}
-    item_data = result.get('item_data', [])
-
-    updated_item_data = []
-    for item in item_data:
-        quantity = item['Quantity']
-        if quantity > 1.0:
-            # Calculate the individual price for each item with quantity > 1.0
-            individual_price = item['TotalPrice'] / quantity
-            for i in range(int(quantity)):
-                new_item = {
-                    'Name': item['Name'],
-                    'Name_Confidence': item['Name_Confidence'],
-                    'Quantity': 1.0,
-                    'Quantity_Confidence': item['Quantity_Confidence'],
-                    'TotalPrice': individual_price,
-                    'TotalPrice_Confidence': item['TotalPrice_Confidence']
-                }
-                updated_item_data.append(new_item)
-        else:
-            updated_item_data.append(item)
-
-    item_data = updated_item_data
-
-    misc_data = result.get('misc_data', {})
-
-    if 'Tip' not in result['misc_data']:
-        result['misc_data']['Tip'] = 0.00
+@app.route('/upload', methods=['POST'])
+def handle_extraction():
+    global item_data, misc_data, image_processing_complete
+    if 'file' not in request.files:
+        return 'No file part in the request', 400
     
-    # Calculate subtotal_amount
-    subtotal_amount = sum(item['TotalPrice'] for item in result['item_data'])
-    result['misc_data']['Subtotal2'] = "{:.2f}".format(subtotal_amount)
-    #subtotal_amount = 0
-    # Calculate total_amount (subtotal + tax)
-    total_amount = subtotal_amount + result['misc_data']['Tax'] + result['misc_data']['Tip']
-    result['misc_data']['Total2'] = "{:.2f}".format(total_amount)
-    #total_amount = 0
-    ######
-    # Combine the 'Person' input with the item data
-    for i, item in enumerate(item_data):
-        item['Person'] = ''
-    return render_template('table_stage.html', item_data=item_data, misc_data=misc_data)
+    file = request.files['file']
+    if file.filename == '':
+        return 'No file selected', 400
+
+    # Start the image processing and extraction in a separate thread
+    # thread = threading.Thread(target=process_image_and_extraction, args=(file,))
+    # thread.start()
+    item_data, misc_data = extract_receipt_data(file)
+
+    # Set processing status to False initially
+    image_processing_complete = False
+
+    return render_template('3_people.html')
+
+@app.route('/table', methods=['POST', 'GET'])
+def table():
+    global item_data, misc_data, names_array, image_processing_complete
+    #print (item_data, misc_data, names_array, image_processing_complete)
+    
+    if request.method == 'POST':
+        data = request.json
+        names_array = data.get('names', [])
+        print(names_array)
+    return render_template('4_table_stage.html', item_data=item_data, misc_data=misc_data, names_array=names_array)
 
 @app.route('/save', methods=['POST'])
 def save_changes():
@@ -231,70 +223,35 @@ def save_changes():
         # Perform any other necessary calculations or updates here
 
         # Redirect back to the table page after saving changes
-        return render_template('table2.html', item_data=item_data, misc_data=misc_data)
+        # return render_template('table2.html', item_data=item_data, misc_data=misc_data)
 
-@app.route('/done', methods=['GET'])
-def done():
-    global item_data
-    global misc_data
-    tax = float(misc_data["Tax"])
-    tip = float(misc_data.get('Tip', 0))
-    bill_total = float(misc_data["Total2"])
-    bill_subtotal = float(misc_data["Subtotal2"])
-    sums_by_person = defaultdict(float)
+        tax = float(misc_data["Tax"])
+        tip = float(misc_data.get('Tip', 0))
+        bill_total = float(misc_data["Total2"])
+        bill_subtotal = float(misc_data["Subtotal2"])
+        sums_by_person = defaultdict(float)
 
-    for item in item_data:
-        person = item['Person']
-        total_price = item['TotalPrice']
-        sums_by_person[person] += total_price
+        for item in item_data:
+            person = item['Person']
+            total_price = item['TotalPrice']
+            sums_by_person[person] += total_price
 
-    # Calculate tax and tip per person
-    tax_per_person = {}
-    tip_per_person = {}
-    total_per_person = {}
-    for person, person_total in sums_by_person.items():
-        tax_per_person[person] = tax * (person_total / bill_subtotal)
-        tip_per_person[person] = tip * (person_total / bill_subtotal)
-        total_per_person[person] = sums_by_person[person] + tax_per_person[person] + tip_per_person[person]
+        # Calculate tax and tip per person
+        tax_per_person = {}
+        tip_per_person = {}
+        total_per_person = {}
+        for person, person_total in sums_by_person.items():
+            tax_per_person[person] = tax * (person_total / bill_subtotal)
+            tip_per_person[person] = tip * (person_total / bill_subtotal)
+            total_per_person[person] = sums_by_person[person] + tax_per_person[person] + tip_per_person[person]
 
-    return render_template('table3.html', sums_by_person=sums_by_person, tax_per_person=tax_per_person, tip_per_person=tip_per_person, total_per_person=total_per_person)
-
-@app.route('/upload', methods=['POST'])
-def handle_extraction():
-    global item_data, misc_data, image_processing_complete
-    if 'file' not in request.files:
-        return 'No file part in the request', 400
-    
-    file = request.files['file']
-    if file.filename == '':
-        return 'No file selected', 400
-
-    # Start the image processing and extraction in a separate thread
-    # thread = threading.Thread(target=process_image_and_extraction, args=(file,))
-    # thread.start()
-    item_data, misc_data = extract_receipt_data(file)
-
-    # Set processing status to False initially
-    image_processing_complete = False
-
-    return render_template('people.html')
-    #return render_template('table_stage.html', item_data=item_data, misc_data=misc_data)
-
-
-@app.route('/table', methods=['POST', 'GET'])
-def table():
-    global item_data, misc_data, names_array, image_processing_complete
-    
-    if request.method == 'POST':
-        data = request.json
-        names_array = data.get('names', [])
-        print(names_array)
-    return render_template('table_stage.html', item_data=item_data, misc_data=misc_data, names_array=names_array)
+        return render_template('table3.html', sums_by_person=sums_by_person, tax_per_person=tax_per_person, tip_per_person=tip_per_person, total_per_person=total_per_person)
 
 if __name__ == '__main__':
     app.run(debug=True)
 
     ##notes
+    #conda create --name your_env_name 
     #conda info --envs
     #conda activate tester
     #python app.py

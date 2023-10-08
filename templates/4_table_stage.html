@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 200vh; overflow: auto;">
+    <form action="/save" method="post">
+        <div style="overflow: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10;">Q</th>
+                        <th style="width: 30%;">Name</th>
+                        <th style="width: 30%;">Total Price</th>
+                        <th style="width: 30%;">Person</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div style="height: calc(100vh - 100px); overflow: auto;">
+            <table>
+                <tbody>
+                    {% for item in item_data %}
+                    <tr>
+                        <td style="width: 10% !important;">{{ "%.0f"|format(item.Quantity|default(1)) }}</td>
+                        <td style="width: 30% !important;">{{ item.Name }}</td>
+                        <td style="width: 30% !important;" class="a">{{ "%.2f"|format(item.TotalPrice) }}</td>
+                        <td style="width: 30% !important;">
+                            <select name="person{{ loop.index }}" style="width: 100px">
+                                <option value="" disabled selected></option>
+                                {% for name in names_array %}
+                                    <option value="{{ name }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <!-- <td><input type="text" name="person{{ loop.index }}" style="width: 100px"></td> -->
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td>Subtotal</td>
+                        <td id="automaticSubtotal">{{ "%.2f"|format(0) }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Tax</td>
+                        <td name="tax" id="taxInput">{{ misc_data.Tax }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Tip</td>
+                        <td>
+                            <input type="text" name="tip" id="tipInput" value="{{ misc_data.Tip }}" style="width: 60px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Total</td>
+                        <td id="automaticTotalCell">{{ "%.2f"|format(0) }}</td>
+                    </tr>
+                </tbody>
+            </div>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            <input type="submit" value="Save Changes">
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </form>
+</div>
+
+<!--
+<h2>Miscellaneous Data:</h2>
+<p>for developing purposes</p>
+<ul>
+    {% for key, value in misc_data.items() %}
+    <li>{{ key }}: {{ value }}</li>
+    {% endfor %}
+</ul>
+-->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var totalPriceElements = document.getElementsByClassName('a');
+        var tipValue = parseFloat(document.getElementById('tipInput').value);
+        var subtotal = 0;
+
+        for (var i = 0; i < totalPriceElements.length; i++) {
+            subtotal += parseFloat(totalPriceElements[i].textContent);
+        }
+
+        var tax = parseFloat(document.getElementById('taxInput').textContent);
+        var automaticSubtotal = document.getElementById('automaticSubtotal');
+        var automaticTotalCell = document.getElementById('automaticTotalCell');
+
+        automaticSubtotal.textContent = subtotal.toFixed(2);
+        automaticTotalCell.textContent = (subtotal + tax + tipValue).toFixed(2);
+    });
+
+    document.getElementById('tipInput').addEventListener('input', function() {
+        var totalPriceElements = document.getElementsByClassName('a');
+        var tipValue = parseFloat(document.getElementById('tipInput').value);
+        var subtotal = 0;
+
+        for (var i = 0; i < totalPriceElements.length; i++) {
+            var name = totalPriceElements[i].textContent;
+            if (name !== "Tax") {
+                subtotal += parseFloat(totalPriceElements[i].textContent);
+            }
+        }
+
+        var tax = parseFloat(document.getElementById('taxInput').textContent);
+        var automaticSubtotal = document.getElementById('automaticSubtotal');
+        var automaticTotalCell = document.getElementById('automaticTotalCell');
+
+        automaticSubtotal.textContent = subtotal.toFixed(2);
+        automaticTotalCell.textContent = (subtotal + tax + tipValue).toFixed(2);
+    });
+</script>
+{% endblock %}
