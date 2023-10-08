@@ -3,20 +3,22 @@
 {% block content %}
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 200vh; overflow: auto;">
     <form action="/save" method="post">
-        <div style="height: 220px;"></div>
-        <div style="overflow: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 10;">Q</th>
-                        <th style="width: 30%;">Name</th>
-                        <th style="width: 30%;">Total Price</th>
-                        <th style="width: 30%;">Person</th>
-                    </tr>
-                </thead>
-            </table>
+        <div style="position: sticky; top: 0; background-color: white; z-index: 1;">
+            <div style="height: 0px;"></div>
+            <div style="overflow: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10;">Q</th>
+                            <th style="width: 30%;">Name</th>
+                            <th style="width: 30%;">Total Price</th>
+                            <th style="width: 30%;">Person</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
-        <div style="height: calc(100vh - 100px); overflow: auto;">
+        <div style="height: calc(100vh - 200px); overflow: auto;">
             <table>
                 <tbody>
                     {% for item in item_data %}
@@ -32,7 +34,6 @@
                                 {% endfor %}
                             </select>
                         </td>
-                        <!-- <td><input type="text" name="person{{ loop.index }}" style="width: 100px"></td> -->
                     </tr>
                     {% endfor %}
                     <tr>
@@ -58,19 +59,21 @@
                         <td id="automaticTotalCell">{{ "%.2f"|format(0) }}</td>
                     </tr>
                 </tbody>
-            </div>
-                <tfoot>
+            </table>
+        </div>
+        <div style="position: sticky; bottom: 0; background-color: white; z-index: 1;">
+            <table>
                     <tr>
                         <td colspan="4">
                             <input type="submit" value="Save Changes">
                         </td>
                     </tr>
-                </tfoot>
             </table>
         </div>
-        <div style="height: 100px;"></div>
     </form>
 </div>
+
+
 
 <!--
 <h2>Miscellaneous Data:</h2>
