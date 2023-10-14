@@ -19,11 +19,15 @@
             </div>
         </div>
         <div style="height: calc(100vh - 200px); overflow: auto;">
+            <input type="hidden" id="item_data_length" value="{{ item_data_length }}">
             <table>
                 <tbody>
                     {% for item in item_data %}
                     <tr>
-                        <td style="width: 10% !important;">{{ "%.0f"|format(item.Quantity|default(1)) }}</td>
+                        <td style="width: 10% !important;">
+                            <span class="quantity-text" id="quantity{{ loop.index }}" onclick="toggleQuantityInput({{ loop.index }})">{{ item.Quantity|default(1) }}</span>
+                            <input type="number" class="quantity-input" name="quantity{{ loop.index }}" min="1" max="3" value="{{ item.Quantity|default(1) }}" style="display: none;">
+                        </td>
                         <td style="width: 30% !important;">{{ item.Name }}</td>
                         <td style="width: 30% !important;" class="a">{{ "%.2f"|format(item.TotalPrice) }}</td>
                         <td style="width: 30% !important;">
@@ -34,7 +38,28 @@
                                 {% endfor %}
                             </select>
                         </td>
-                    </tr>
+                    </tr> <!--
+                    {% if item.Quantity > 1 %}
+                    {% print(item) %}
+                        {% for i in range(1, item.Quantity) %}
+                            <tr>
+                                <td style="width: 10% !important;">
+                                    <span class="quantity-text" id="quantity{{ loop.index }}_{{ i }}" onclick="toggleQuantityInput({{ loop.index }})">{{ item.Quantity|default(1) }}</span>
+                                    <input type="number" class="quantity-input" name="quantity{{ loop.index }}_{{ i }}" min="1" max="3" value="{{ item.Quantity|default(1) }}" style="display: none;">
+                                </td>
+                                <td style="width: 30% !important;">{{ item.Name }}</td>
+                                <td style="width: 30% !important;" class="a">{{ "%.2f"|format(item.TotalPrice) }}</td>
+                                <td style="width: 30% !important;">
+                                    <select name="person{{ loop.index }}" style="width: 100px">
+                                        <option value="" disabled selected></option>
+                                        {% for name in names_array %}
+                                            <option value="{{ name }}">{{ name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}-->
                     {% endfor %}
                     <tr>
                         <td></td>
@@ -73,20 +98,8 @@
     </form>
 </div>
 
-
-
-<!--
-<h2>Miscellaneous Data:</h2>
-<p>for developing purposes</p>
-<ul>
-    {% for key, value in misc_data.items() %}
-    <li>{{ key }}: {{ value }}</li>
-    {% endfor %}
-</ul>
--->
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function updateTotal() {
         var totalPriceElements = document.getElementsByClassName('a');
         var tipValue = parseFloat(document.getElementById('tipInput').value);
         var subtotal = 0;
@@ -101,26 +114,91 @@
 
         automaticSubtotal.textContent = subtotal.toFixed(2);
         automaticTotalCell.textContent = (subtotal + tax + tipValue).toFixed(2);
-    });
+    }
 
-    document.getElementById('tipInput').addEventListener('input', function() {
-        var totalPriceElements = document.getElementsByClassName('a');
-        var tipValue = parseFloat(document.getElementById('tipInput').value);
-        var subtotal = 0;
+    function toggleQuantityInput(index) {
+        var quantityText = document.getElementById('quantity' + index);
+        var quantityInput = document.querySelector('input[name="quantity' + index + '"]');
 
-        for (var i = 0; i < totalPriceElements.length; i++) {
-            var name = totalPriceElements[i].textContent;
-            if (name !== "Tax") {
-                subtotal += parseFloat(totalPriceElements[i].textContent);
-            }
+        if (quantityText.style.display === 'none') {
+            quantityText.style.display = 'inline';
+            quantityInput.style.display = 'none';
+        } else {
+            quantityText.style.display = 'none';
+            quantityInput.style.display = 'inline';
+            quantityInput.focus();
+        }
+    }
+
+    // Listen for changes in quantity inputs
+    var quantityInputs = document.querySelectorAll('input[name^="quantity"]');
+    quantityInputs.forEach(function(input) {
+    input.addEventListener('blur', function() {
+        // Get the parent row
+        var row = input.parentElement.parentElement;
+
+        // Check if the row is the original row or a duplicated row
+        if (!row.classList.contains('duplicated')) {
+            // Calculate the total price for the original row
+            var index = input.name.match(/\d+/)[0];
+            var quantity = parseInt(input.value, 10);
+            var originalTotalPriceElement = row.querySelector('.a');
+            var originalTotalPrice = parseFloat(originalTotalPriceElement.textContent);
+            var newTotalPrice = originalTotalPrice / quantity;
+
+            // Update the original total price
+            originalTotalPriceElement.textContent = newTotalPrice.toFixed(2);
+        }
+        // console.log("HHHOOOLLLAAA")
+        // console.log("inputval: " + input.value + input.defaultValue);
+        
+        // Only send the POST request if the input value has changed
+        if (input.value !== input.defaultValue) {
+            
+            // Send the POST request here
+            // Add your code to send the POST request
         }
 
-        var tax = parseFloat(document.getElementById('taxInput').textContent);
-        var automaticSubtotal = document.getElementById('automaticSubtotal');
-        var automaticTotalCell = document.getElementById('automaticTotalCell');
+        // Update the total
+        updateTotal();
 
-        automaticSubtotal.textContent = subtotal.toFixed(2);
-        automaticTotalCell.textContent = (subtotal + tax + tipValue).toFixed(2);
+        // Get the item_data_length from the hidden input field
+        var itemDataLength = parseInt(document.getElementById('item_data_length').value, 10);
+
+        // Duplicate the row based on the new quantity (if greater than 1)
+        var quantity = parseInt(input.value, 10);
+        if (quantity > 1) {
+            for (var i = 2; i <= quantity; i++) {
+                var newRow = row.cloneNode(true);
+                newRow.classList.add('duplicated');
+                newRow.querySelector('.quantity-text').textContent = 1;
+                newRow.querySelector('.quantity-input').value = 1;
+                newRow.querySelector('.quantity-input').style.display = 'none';
+                newRow.querySelector('.quantity-text').style.display = 'inline';
+
+                // Change the name of the first <td> tag
+                var firstTd = newRow.querySelector('td:first-child');
+                var loopIndex = newRow.querySelector('input.quantity-input').name.match(/quantity(\d+)/)[1];
+                firstTd.innerHTML = firstTd.innerHTML.replace(`name="quantity${loopIndex}"`, `name="quantity${itemDataLength - 1 + i}"`);
+
+                // Change the name of the fourth <td> tag's <select>
+                var fourthTd = newRow.querySelector('td:nth-child(4)');
+                fourthTd.innerHTML = fourthTd.innerHTML.replace(/name="person(\d+)"/, `name="person${itemDataLength - 1 + i}"`);
+                input.parentElement.parentElement.parentElement.insertBefore(newRow, input.parentElement.parentElement.nextSibling);
+            }
+            //input.value = ; // Reset the original input to 1
+            toggleQuantityInput(index); // Switch back to text mode for the original input
+        }
+
+
     });
+});
+
+    document.addEventListener('DOMContentLoaded', updateTotal);
+
+    document.getElementById('tipInput').addEventListener('input', updateTotal);
 </script>
+
+
+
 {% endblock %}

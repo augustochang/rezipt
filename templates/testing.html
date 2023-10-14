@@ -1,0 +1,23 @@
+<script>
+    // Duplicate the row based on the new quantity (if greater than 1)
+var quantity = parseInt(input.value, 10);
+if (quantity > 1) {
+    for (var i = 2; i <= quantity; i++) {
+        var newRow = row.cloneNode(true);
+        newRow.classList.add('duplicated');
+        newRow.querySelector('.quantity-text').textContent = 1;
+        newRow.querySelector('.quantity-input').value = 1;
+        newRow.querySelector('.quantity-input').style.display = 'none';
+        newRow.querySelector('.quantity-text').style.display = 'inline';
+
+        // Change the name of the 4th <td> tag (select element) based on i
+        var selectElement = newRow.querySelector('td:nth-child(4) select[name^="person"]');
+        selectElement.name = selectElement.name.replace(/person(\d+)/, 'person$1_' + i);
+
+        input.parentElement.parentElement.parentElement.insertBefore(newRow, input.parentElement.parentElement.nextSibling);
+    }
+    //input.value = ; // Reset the original input to 1
+    toggleQuantityInput(index); // Switch back to text mode for the original input
+}
+
+</script>

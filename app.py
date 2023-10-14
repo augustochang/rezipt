@@ -11,6 +11,7 @@ from collections import defaultdict
 import credential
 import asyncio
 import threading
+import pprint
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 
@@ -39,6 +40,14 @@ def process_image_and_extraction(file):
 
 def extract_receipt_data(file):
 
+    #tester
+    # # item_data = [{'Name': 'Burrata', 'Name_Confidence': 0.838, 'TotalPrice': 14.0, 'TotalPrice_Confidence': 0.982, 'Quantity': 1, 'Person': ''}, {'Name': 'Onion Soup Gratinée', 'Name_Confidence': 0.873, 'TotalPrice': 12.0, 'TotalPrice_Confidence': 0.982, 'Quantity': 1, 'Person': ''}, {'Name': 'The Steak', 'Name_Confidence': 0.925, 'Quantity': 1, 'Quantity_Confidence': 0.973, 'TotalPrice': 38.0, 'TotalPrice_Confidence': 0.982, 'Person': ''}, {'Name': 'The Steak', 'Name_Confidence': 0.925, 'Quantity': 1, 'Quantity_Confidence': 0.973, 'TotalPrice': 38.0, 'TotalPrice_Confidence': 0.982, 'Person': ''}, {'Name': 'Fish & Chips', 'Name_Confidence': 0.909, 'Quantity': 1, 'Quantity_Confidence': 0.973, 'TotalPrice': 24.0, 'TotalPrice_Confidence': 0.981, 'Person': ''}, {'Name': 'Brussels Sprouts', 'Name_Confidence': 0.923, 'Quantity': 1, 'Quantity_Confidence': 0.97, 'TotalPrice': 12.0, 'TotalPrice_Confidence': 0.982, 'Person': ''}, {'Name': 'Fieldwork IPA', 'Name_Confidence': 0.923, 'Quantity': 1, 'Quantity_Confidence': 0.969, 'TotalPrice': 16.0, 'TotalPrice_Confidence': 0.982, 'Person': ''}, {'Name': 'Penne alla Bolognese', 'Name_Confidence': 0.873, 'TotalPrice': 24.0, 'TotalPrice_Confidence': 0.982, 'Quantity': 1, 'Person': ''}, {'Name': 'Pork Chop', 'Name_Confidence': 0.873, 'TotalPrice': 30.0, 'TotalPrice_Confidence': 0.982, 'Quantity': 1, 'Person': ''}, {'Name': 'GLS - Pinot Noir', 'Name_Confidence': 0.894, 'Quantity': 1, 'Quantity_Confidence': 0.973, 'TotalPrice': 15.0, 'TotalPrice_Confidence': 0.964, 'Person': ''}, {'Name': 'GLS - Pinot Noir', 'Name_Confidence': 0.894, 'Quantity': 1, 'Quantity_Confidence': 0.973, 'TotalPrice': 15.0, 'TotalPrice_Confidence': 0.964, 'Person': ''}, {'Name': 'Coke Zero', 'Name_Confidence': 0.872, 'TotalPrice': 4.0, 'TotalPrice_Confidence': 0.981, 'Quantity': 1, 'Person': ''}, {'Name': 'GLS - House White (Draft)', 'Name_Confidence': 0.856, 'Quantity': 1, 'Quantity_Confidence': 0.971, 'TotalPrice': 9.0, 'TotalPrice_Confidence': 0.982, 'Person': ''}]
+    # item_data = [{'Name': 'Burrata', 'Name_Confidence': 0.838, 'TotalPrice': 14.0, 'TotalPrice_Confidence': 0.982, 'Quantity': 1, 'Person': ''}, {'Name': 'Onion Soup Gratinée', 'Name_Confidence': 0.873, 'TotalPrice': 12.0, 'TotalPrice_Confidence': 0.982, 'Quantity': 1, 'Person': ''}]
+    # # item_data = [{"Name": "Singha Draft", "Name_Confidence": 0.975, "Quantity": 10.0, "Quantity_Confidence": 0.977, "TotalPrice": 70.0, "TotalPrice_Confidence": 0.986}, {"Name": "BBQ Pork & Crispy Pork Belly over Rice", "Name_Confidence": 0.827, "Quantity": 2.0, "Quantity_Confidence": 0.977, "TotalPrice": 35.9, "TotalPrice_Confidence": 0.986}, {"Name": "Thai Omelet over Rice", "Name_Confidence": 0.965, "Quantity": 1.0, "Quantity_Confidence": 0.977, "TotalPrice": 14.95, "TotalPrice_Confidence": 0.986}, {"Name": "Pad Thai", "Name_Confidence": 0.975, "Quantity": 1.0, "Quantity_Confidence": 0.977, "TotalPrice": 21.45, "TotalPrice_Confidence": 0.986}, {"Name": "Moscow Mule", "Name_Confidence": 0.975, "Quantity": 3.0, "Quantity_Confidence": 0.977, "TotalPrice": 46.5, "TotalPrice_Confidence": 0.986}, {"Name": "Tamarind Spiced Sour", "Name_Confidence": 0.971, "Quantity": 1.0, "Quantity_Confidence": 0.977, "TotalPrice": 15.5, "TotalPrice_Confidence": 0.986}]
+    # misc_data = {'MerchantAddress': '1820 Fourth St. Berkeley CA 94710', 'MerchantAddress_Confidence': 0.982, 'MerchantName': 'ZUT! on fourth', 'MerchantName_Confidence': 0.974, 'ReceiptType': 'Itemized', 'ReceiptType_Confidence': 0.995, 'Subtotal': 251.0, 'Subtotal_Confidence': 0.987, 'Tax': 25.75, 'Tax_Confidence': 0.988, 'Tip': 50.2, 'Tip_Confidence': 0.97, 'Total': 326.95, 'Total_Confidence': 0.982, 'TransactionDate': '2023-10-13', 'TransactionDate_Confidence': 0.989, 'TransactionTime': '16:48:00', 'TransactionTime_Confidence': 0.987, 'Subtotal2': '251.00', 'Total2': '326.95'}
+    # return item_data,misc_data
+    
+
     a = 1 #varaible to test and not calling API (1 for production)
     if a == 1:
         # Process the binary image data
@@ -53,9 +62,6 @@ def extract_receipt_data(file):
                 image.save(output, format="JPEG")
                 image_bytes = output.getvalue()
 
-        # credentials = json.load(open('./credential1.json'))
-        # API_KEY = credentials['API_KEY']
-        # ENDPOINT = credentials['ENDPOINT']
         API_KEY = credential.API_KEY
         ENDPOINT = credential.ENDPOINT
 
@@ -63,35 +69,34 @@ def extract_receipt_data(file):
         poller = form_recognizer_client.begin_recognize_receipts(receipt=image_bytes, locale="en-US")
         result = poller.result()
         result = format(result)
-        print('AAAA')
-        print(result)
-        print(type(result))
+        print(result, type(result))
     else:
-        # result = str({"item_data": [{"Name": "TRKY BRGR / NO BUN", "Name_Confidence": 0.872, "Quantity": 1.0, "Quantity_Confidence": 0.936, "TotalPrice": 12.0, "TotalPrice_Confidence": 0.971}, {"Name": "CHCKN POT PIE", "Name_Confidence": 0.908, "Quantity": 1.0, "Quantity_Confidence": 0.936, "TotalPrice": 11.5, "TotalPrice_Confidence": 0.971}, {"Name": "ROAST CHCKN", "Name_Confidence": 0.925, "Quantity": 1.0, "Quantity_Confidence": 0.936, "TotalPrice": 13.5, "TotalPrice_Confidence": 0.971}, {"Name": "SALAD", "Name_Confidence": 0.932, "Quantity": 1.0, "Quantity_Confidence": 0.938, "TotalPrice": 8.95, "TotalPrice_Confidence": 0.971}, {"Name": "BRUSSELS SPROUTS", "Name_Confidence": 0.927, "Quantity": 1.0, "Quantity_Confidence": 0.937, "TotalPrice": 7.95, "TotalPrice_Confidence": 0.971}, {"Name": "ICED TEA", "Name_Confidence": 0.925, "Quantity": 1.0, "Quantity_Confidence": 0.936, "TotalPrice": 3.0, "TotalPrice_Confidence": 0.971}, {"Name": "SODA", "Name_Confidence": 0.933, "Quantity": 1.0, "Quantity_Confidence": 0.938, "TotalPrice": 3.0, "TotalPrice_Confidence": 0.971}, {"Name": "LEMONADE", "Name_Confidence": 0.933, "Quantity": 1.0, "Quantity_Confidence": 0.937, "TotalPrice": 5.0, "TotalPrice_Confidence": 0.971}], "misc_data": {"ReceiptType": "Itemized", "ReceiptType_Confidence": 0.994, "Subtotal": 64.9, "Subtotal_Confidence": 0.983, "Tax": 5.84, "Tax_Confidence": 0.987, "Total": 70.74, "Total_Confidence": 0.982, "TransactionTime": "18:42:00", "TransactionTime_Confidence": 0.985}})
-        print(type(result))
-        #result = str({'item_data': [{'Name': 'TRKY BRGR / NO BUN', 'Name_Confidence': 0.872, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 12.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'CHCKN POT PIE', 'Name_Confidence': 0.908, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 11.5, 'TotalPrice_Confidence': 0.971}, {'Name': 'ROAST CHCKN', 'Name_Confidence': 0.925, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 13.5, 'TotalPrice_Confidence': 0.971}, {'Name': 'SALAD', 'Name_Confidence': 0.932, 'Quantity': 1.0, 'Quantity_Confidence': 0.938, 'TotalPrice': 8.95, 'TotalPrice_Confidence': 0.971}, {'Name': 'BRUSSELS SPROUTS', 'Name_Confidence': 0.927, 'Quantity': 1.0, 'Quantity_Confidence': 0.937, 'TotalPrice': 7.95, 'TotalPrice_Confidence': 0.971}, {'Name': 'ICED TEA', 'Name_Confidence': 0.925, 'Quantity': 1.0, 'Quantity_Confidence': 0.936, 'TotalPrice': 3.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'SODA', 'Name_Confidence': 0.933, 'Quantity': 1.0, 'Quantity_Confidence': 0.938, 'TotalPrice': 3.0, 'TotalPrice_Confidence': 0.971}, {'Name': 'LEMONADE', 'Name_Confidence': 0.933, 'Quantity': 1.0, 'Quantity_Confidence': 0.937, 'TotalPrice': 5.0, 'TotalPrice_Confidence': 0.971}], 'misc_data': {'ReceiptType': 'Itemized', 'ReceiptType_Confidence': 0.994, 'Subtotal': 64.9, 'Subtotal_Confidence': 0.983, 'Tax': 5.84, 'Tax_Confidence': 0.987, 'Total': 70.74, 'Total_Confidence': 0.982, 'TransactionTime': '18:42:00', 'TransactionTime_Confidence': 0.985}})
-        #result = {"item_data": [{"Name": "Blackened Salmon Sandwich", "Name_Confidence": 0.973, "Quantity": 2.0, "Quantity_Confidence": 0.983, "TotalPrice": 42.0, "TotalPrice_Confidence": 0.987}, {"Name": "Chicken Quesadilla", "Name_Confidence": 0.976, "Quantity": 2.0, "Quantity_Confidence": 0.983, "TotalPrice": 30.0, "TotalPrice_Confidence": 0.987}, {"Name": "French Dip", "Name_Confidence": 0.976, "Quantity": 1.0, "Quantity_Confidence": 0.983, "TotalPrice": 22.0, "TotalPrice_Confidence": 0.987}, {"Name": "520 Burger", "Name_Confidence": 0.976, "Quantity": 1.0, "Quantity_Confidence": 0.983, "TotalPrice": 20.0, "TotalPrice_Confidence": 0.987}], "misc_data": {"MerchantAddress": "10146 Main Street Bellevue, WA 98004", "MerchantAddress_Confidence": 0.981, "MerchantName": "520 Bar and Grill", "MerchantName_Confidence": 0.972, "ReceiptType": "Itemized", "ReceiptType_Confidence": 0.99, "Subtotal": 114.0, "Subtotal_Confidence": 0.987, "Tax": 11.52, "Tax_Confidence": 0.988, "Tip": 22.59, "Tip_Confidence": 0.965, "Total": 148.11, "Total_Confidence": 0.72, "TransactionDate": "2023-07-30", "TransactionDate_Confidence": 0.989, "TransactionTime": "21:51:00", "TransactionTime_Confidence": 0.977}}
-   
+        result = {"item_data": [{"Name": "Burrata", "Name_Confidence": 0.838, "TotalPrice": 14.0, "TotalPrice_Confidence": 0.982}, {"Name": "Onion Soup Gratin\u00e9e", "Name_Confidence": 0.873, "TotalPrice": 12.0, "TotalPrice_Confidence": 0.982}, {"Name": "The Steak", "Name_Confidence": 0.925, "Quantity": 2.0, "Quantity_Confidence": 0.973, "TotalPrice": 76.0, "TotalPrice_Confidence": 0.982}, {"Name": "Fish & Chips", "Name_Confidence": 0.909, "Quantity": 1.0, "Quantity_Confidence": 0.973, "TotalPrice": 24.0, "TotalPrice_Confidence": 0.981}, {"Name": "Brussels Sprouts", "Name_Confidence": 0.923, "Quantity": 1.0, "Quantity_Confidence": 0.97, "TotalPrice": 12.0, "TotalPrice_Confidence": 0.982}, {"Name": "Fieldwork IPA", "Name_Confidence": 0.923, "Quantity": None, "Quantity_Confidence": 0.969, "TotalPrice": 16.0, "TotalPrice_Confidence": 0.982}, {"Name": "Penne alla Bolognese", "Name_Confidence": 0.873, "TotalPrice": 24.0, "TotalPrice_Confidence": 0.982}, {"Name": "Pork Chop", "Name_Confidence": 0.873, "TotalPrice": 30.0, "TotalPrice_Confidence": 0.982}, {"Name": "GLS - Pinot Noir", "Name_Confidence": 0.894, "Quantity": 2.0, "Quantity_Confidence": 0.973, "TotalPrice": 30.0, "TotalPrice_Confidence": 0.964}, {"Name": "Coke Zero", "Name_Confidence": 0.872, "TotalPrice": 4.0, "TotalPrice_Confidence": 0.981}, {"Name": "GLS - House White (Draft)", "Name_Confidence": 0.856, "Quantity": None, "Quantity_Confidence": 0.971, "TotalPrice": 9.0, "TotalPrice_Confidence": 0.982}], "misc_data": {"MerchantAddress": "1820 Fourth St. Berkeley CA 94710", "MerchantAddress_Confidence": 0.982, "MerchantName": "ZUT! on fourth", "MerchantName_Confidence": 0.974, "ReceiptType": "Itemized", "ReceiptType_Confidence": 0.995, "Subtotal": 251.0, "Subtotal_Confidence": 0.987, "Tax": 25.75, "Tax_Confidence": 0.988, "Tip": 50.2, "Tip_Confidence": 0.97, "Total": 326.95, "Total_Confidence": 0.982, "TransactionDate": "2023-10-13", "TransactionDate_Confidence": 0.989, "TransactionTime": "16:48:00", "TransactionTime_Confidence": 0.987}}
+        result = str(result)
+        print(result,type(result))
 
-     # Parse the result string into a JSON object
+    # Parse the result string into a JSON object
     try:
         result = json.loads(result)
     except json.JSONDecodeError:
         return 'Invalid JSON data', 400
     misc_data = result.get('misc_data', {})
     item_data = result.get('item_data', [])
+    #print('aa',item_data)
 
     updated_item_data = []
     for item in item_data:
         quantity = item.get('Quantity', 1)
-        if quantity > 1.0:
+        if 'Quantity' not in item.keys() or quantity == 1.0 or quantity is None:
+            item['Quantity'] = 1
+        if quantity and quantity > 1.0:
             # Calculate the individual price for each item with quantity > 1.0
             individual_price = item['TotalPrice'] / quantity
             for i in range(int(quantity)):
                 new_item = {
                     'Name': item['Name'],
                     'Name_Confidence': item['Name_Confidence'],
-                    'Quantity': 1.0,
+                    'Quantity': 1,
                     'Quantity_Confidence': item['Quantity_Confidence'],
                     'TotalPrice': individual_price,
                     'TotalPrice_Confidence': item['TotalPrice_Confidence']
@@ -101,6 +106,7 @@ def extract_receipt_data(file):
             updated_item_data.append(item)
 
     item_data = updated_item_data
+    #print('bb', item_data)
 
     if 'Tip' not in misc_data.keys() or misc_data['Tip'] == None:
         misc_data['Tip'] = 0.00
@@ -119,7 +125,7 @@ def extract_receipt_data(file):
     # Combine the 'Person' input with the item data
     for i, item in enumerate(item_data):
         item['Person'] = ''
-
+    #print('jj', item_data, misc_data)
     return item_data,misc_data
 
 def format(result):
@@ -157,7 +163,6 @@ def serialize(obj):
 @app.route('/', methods=['POST', 'GET'])
 def index():
     return render_template('1_pre.html')
-    return redirect(url_for('pre'))
     
 @app.route('/pre', methods=['POST', 'GET'])
 def pre():
@@ -194,13 +199,13 @@ def handle_extraction():
 @app.route('/table', methods=['POST', 'GET'])
 def table():
     global item_data, misc_data, names_array, image_processing_complete
-    #print (item_data, misc_data, names_array, image_processing_complete)
     
     if request.method == 'POST':
         data = request.json
         names_array = data.get('names', [])
         print(names_array)
-    return render_template('4_table_stage.html', item_data=item_data, misc_data=misc_data, names_array=names_array)
+    item_data_length = len(item_data)
+    return render_template('4_table_stage.html', item_data=item_data, misc_data=misc_data, names_array=names_array, item_data_length=item_data_length)
 
 @app.route('/save', methods=['POST'])
 def save_changes():
@@ -208,22 +213,37 @@ def save_changes():
 
     if request.method == 'POST':
         # Get the form data sent from the 'editable-cell' cells
+
         for key, value in request.form.items():
+            new_item_data = []
+            #print('BB', key,value)
             if key.startswith('person'):
                 # Assuming 'person1', 'person2', ... keys represent 'Person' column values
                 person_index = int(key.replace('person', '')) - 1
+                #print('person_index: ',person_index)
                 item_data[person_index]['Person'] = value
-            elif key == 'tax':
-                # Assuming the 'tax' key represents the 'Tax' cell value
-                misc_data['Tax'] = float(value)
-            elif key == 'tip':
-                # Assuming the 'tip' key represents the 'Tip' cell value
-                misc_data['Tip'] = float(value)
+            elif key.startswith('quantity'):
+                # Assuming 'quantity1', 'quantity2', ... keys represent quantity changes
+                item_index = int(key.replace('quantity', '')) - 1
+                quantity = int(value)
 
-        # Perform any other necessary calculations or updates here
+                if quantity > 1:
+                    item_data[item_index]['TotalPrice'] = item_data[item_index]['TotalPrice'] / quantity
+                    for i in range(1, quantity):
+                        new_item_data.append(item_data[item_index].copy())
+                    # Extend item_data with the new rows
+                    item_data.extend(new_item_data)
 
-        # Redirect back to the table page after saving changes
-        # return render_template('table2.html', item_data=item_data, misc_data=misc_data)
+        if 'tax' in request.form:
+            # Assuming the 'tax' key represents the 'Tax' cell value
+            misc_data['Tax'] = float(request.form['tax'])
+
+        if 'tip' in request.form:
+            # Assuming the 'tip' key represents the 'Tip' cell value
+            misc_data['Tip'] = float(request.form['tip'])
+
+        pprint.pprint(item_data)
+        # print(misc_data)
 
         tax = float(misc_data["Tax"])
         tip = float(misc_data.get('Tip', 0))
