@@ -38,28 +38,7 @@
                                 {% endfor %}
                             </select>
                         </td>
-                    </tr> <!--
-                    {% if item.Quantity > 1 %}
-                    {% print(item) %}
-                        {% for i in range(1, item.Quantity) %}
-                            <tr>
-                                <td style="width: 10% !important;">
-                                    <span class="quantity-text" id="quantity{{ loop.index }}_{{ i }}" onclick="toggleQuantityInput({{ loop.index }})">{{ item.Quantity|default(1) }}</span>
-                                    <input type="number" class="quantity-input" name="quantity{{ loop.index }}_{{ i }}" min="1" max="3" value="{{ item.Quantity|default(1) }}" style="display: none;">
-                                </td>
-                                <td style="width: 30% !important;">{{ item.Name }}</td>
-                                <td style="width: 30% !important;" class="a">{{ "%.2f"|format(item.TotalPrice) }}</td>
-                                <td style="width: 30% !important;">
-                                    <select name="person{{ loop.index }}" style="width: 100px">
-                                        <option value="" disabled selected></option>
-                                        {% for name in names_array %}
-                                            <option value="{{ name }}">{{ name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% endif %}-->
+                    </tr>
                     {% endfor %}
                     <tr>
                         <td></td>
